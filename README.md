@@ -15,27 +15,17 @@ Current instructions to make stuff run:
 
 --- CREATING DATA (you can skip steps 1-4 if data already exists) ---
 
-1) create the data folder in which you want to work (e.g. test)
+1) Open config.ini or config_local.ini and set your system pathd and system parameters.
 
-2) open bring_disk_sim_data.py (You never actually run this code. It gets used by other codes.)
-    a) set masses m
-    b) set moons' semi-major axes a
-    c) adjust any other parameters, like ring radii or tau values
-
-3) open data_creation.py
-    a) set tergetdir to folder to which data should be saved (e.g. test)
-    b) set impact - it's the impact parameter in terms of parts of the Hill radius  =>  b = impact * R_Hill
-
-4) run data_creation.py
+2) Run data_creation.py
 
 --- CREATING PLOT ---
 
-5) open grid_lightcurve_plots.py
-    a) set target folder "data" (to e.g. test)
-    b) set figure suptitle
-    c) maybe need to adjust days_side and y_range
+3) In grid_lightcurve_plots.py
+    a) can change figure suptitle
+    b) maybe need to adjust days_side and y_range
 
-6) run grid_lightcurve_plots.py
+4) run grid_lightcurve_plots.py
     => it uses the data in folder "data" to make a grid in the same folder
 
 
