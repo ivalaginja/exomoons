@@ -53,15 +53,15 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from astropy.table import Table, Column
 from astropy.io import ascii, fits
+# from scipy.ndimage import convolve
+from scipy.interpolate import interp1d
+from matplotlib.patches import PathPatch
 
 import exomoons_py.modules.exorings as exorings
 import exomoons_py.modules.j1407 as j1407
 import exomoons_py.modules.bring as bring
-from hicat.config import CONFIG_INI
+from exomoons_py.config import CONFIG_INI
 
-# from scipy.ndimage import convolve
-from scipy.interpolate import interp1d
-from matplotlib.patches import PathPatch
 
 # mpl.interactive(True)
 # set sensible imshow defaults
@@ -226,56 +226,42 @@ print('')
 # BEGIN main program (I made it a single function, because it's used in another program)
 ########################################################################################
 def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramfile=False):
+
+    # stellar and planetary parameters of beta Pic b
+    a_Picb = CONFIG_INI.getfloat('beta_Pic', 'planet_axis') * au  # [m]  semi-major axis of planetary orbit around host star
+    r_Picb = CONFIG_INI.getfloat('beta_Pic', 'planet_radius') * rjup  # [m]  planet radius
+    m_Picb = CONFIG_INI.getfloat('beta_Pic', 'planet_mass') * mjup  # [kg] planet mass
+    M_beta_Pic = CONFIG_INI.getfloat('beta_Pic', 'star_mass') * msol  # [kg] mass of the host star beta Pic, which is very, very uncertain
+    d_beta_Pic = CONFIG_INI.getfloat('beta_Pic', 'star_distance') * pc  # [m]  distance to beta Pic; from SIMBAD
+    R_beta_Pic = CONFIG_INI.getfloat('beta_Pic', 'star_radius') * rsol  # [m]  radius of beta Pic; from paper [http://iopscience.iop.org/article/10.1086/509912/pdf]
+
     # -----------------------------------------
     # PART 1: Generating the supermoons and calculating planetary parameters
 
-    # names and indices of the moons #setval
-    # super_names = np.array(["Sup-Io","Sup-Europe","Sup-Ganymede","Sup-Callisto"])
-    super_names = np.array(["Sup1", "Sup2", "Sup3"])
-    # index_array = np.array([0,1,2,3])
-    index_array = np.array([0, 1, 2])
-    # --- #moon-no 
+    # Read in from config file which moon system you want to use.
+    moon_system = CONFIG_INI.get('moon_parameters', 'system')
+    moon_number = CONFIG_INI.getint(moon_system, 'number_of_moons')
 
-    # set masses m and semi-major axes a for Galilean satellites:
-    # setval
-    m_io = 8.93e22  # masses in [kg]
-    m_europe = 4.8e22
-    m_ganymede = 1.48e23
-    m_callisto = 1.08e23
-    m_Moon = mmoon  # Earth's moon
-    m_Earth = mearth
-    # --- #moon-no 
+    # Create empty arrays of size according to number of moons to hold masses and semi-major axes.
+    moon_names = np.chararray(moon_number)
+    index_array = np.zeros(moon_number)
+    masses_array = np.zeros(moon_number)
+    axes_array = np.zeros(moon_number)
 
-    a_io = 4.218e8  # semi-major axes in [m] from Wikipedia
-    a_europe = 6.71e8
-    a_ganymede = 1.0704e9
-    a_callisto = 1.8827e9
-    a_Moon = 3.844e5  # Earth-moon distance
-    # --- #moon-no 
+    # Fill moon parameter arrays.
+    for i in range(moon_number):
+        moon_names[i] = CONFIG_INI.get(moon_system, 'name' + str(i+1))
+        index_array[i] = i
+        masses_array[i] = CONFIG_INI.getfloat(moon_system, 'mass' + str(i+1))
+        axes_array[i] = CONFIG_INI.get(moon_system, 'axis' + str(i+1))
 
-    # make arrays out of the input data for moon masses and semi-major axes
-    # masses_array = np.array([m_io,m_europe,m_ganymede,m_callisto])   # [kg] feeding masses  into array
-    masses_array = np.array(
-        [m_io, m_europe, m_ganymede])  # if special case, change here (but not with scaling factors, that comes later)
-    m_sat_mjup = masses_array / mjup  # [mjup]!!!			# converting to Jupiter masses
-    # m_sat_mjup = masses_array/mearth # [mearth]!!!    # converting to Earth masses
-    # --- #moon-no 
+    # Convert masses to Jupiter masses and axes to Jupiter radii.
+    m_sat_mjup = masses_array / mjup  # [mjup]!!!    # converting to Jupiter masses
+    a_sat_rjup = axes_array / rjup  # [rjup]!!!      # converting to Jupiter radii [rjup]
 
-    # axes_array = np.array([a_io,a_europe,a_ganymede,a_callisto]) #*x   #setval(*x increases axes arbitraryly)   # feeding distances into array [m]
-    axes_array = np.array(
-        [a_io, a_europe, a_ganymede])  # if special case, change here (but not with scaling factors, that comes later)
-    a_sat_rjup = axes_array / rjup  # [rjup]!!!                            # converting to Jupiter radii [rjup]
-    # a_sat_rjup = axes_array/rearth # [rearth]!!!                       # converting to Earth radii [rearth]
-    # --- #moon-no 
 
-    # stellar and planetary parameters of beta Pic b (sources needed)
-    # setval
-    a_Picb = 9.66 * au  # [m]  semi-major axis of planetary orbit around host star
-    r_Picb = 1.65 * rjup  # [m]  planet radius
-    m_Picb = 11 * mjup  # [kg] planet mass
-    M_beta_Pic = 1.61 * msol  # [kg] mass of the host star beta Pic, which is very, very uncertain
-    d_beta_Pic = 19.3 * pc  # [m]  distance to beta Pic; from SIMBAD
-    R_beta_Pic = 1.37 * rsol  # [m]  radius of beta Pic; from paper [http://iopscience.iop.org/article/10.1086/509912/pdf]
+
+
 
     # scaling masses and sem.-maj. axes of satellites up with respect to beta Pic b's mass and size, respectively
     scale_masses = False
@@ -288,8 +274,8 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
     # --- #mass-scaling #axes-scaling
 
     # including extra scaling factors
-    scale_fac_a = 40.
-    scale_fac_m = 10.
+    scale_fac_a = CONFIG_INI.getfloat('moon_parameters', 'scale_fac_axes')
+    scale_fac_m = CONFIG_INI.getfloat('moon_parameters', 'scale_fac_masses')
 
     a_sat_Picb = a_sat_Picb * scale_fac_a  # including scaling factor to blow system up
     # m_sat_Picb = m_sat_Picb * 1.5
@@ -303,6 +289,11 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
     # this line is because I was using a different combiation of moon masses and distances: #pyadjust
     # m_sat_Picb = np.array([m_europe,m_ganymede,m_callisto])
     # a_sat_Picb = (np.array([a_io,a_europe,a_ganymede])/rjup) * r_Picb * 40   # distances of three closest moons; scaled up; with factor 30
+
+
+
+
+
 
     # calculate Hill radii of b Pic b and its supermoons
     hill_betaPicb = bring.hill(a_Picb, m_Picb, M_beta_Pic)  # [m] Hill radius of beta Pic b (single number)
@@ -322,7 +313,7 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
     print('------------------------------------------------')
 
     # creating a .txt file of these parameters, for further use
-    out0 = super_names  # names of supermoons
+    out0 = moon_names  # names of supermoons
     out1 = index_array  # ID's of supermoons
     out2 = m_sat_Picb  # masses of supermoons [kg]
     out2c = m_sat_Picb / mjup  # masses of supermoons [mjup]
@@ -338,7 +329,7 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
                         names=['name', 'ID', 'mass[kg]', 'mass[mjup]', 'mass[m_Picb]', 'mass[mearth]', 'axis[m]',
                                'axis[R_H planet]', 'axis[r_Picb]', 'R_Hill[m]', 'R_Hill[r_Picb]'],
                         meta={'name': 'supermoons'})
-    super_table.write(targetdir + output + '.txt', format='ascii')
+    super_table.write(os.path.join(targetdir, output + '.txt'), format='ascii')
 
     print('')
     print("Writing supermoons' IDs, masses, sem.-maj. axes and Hill radii into 'model.txt'.")
@@ -366,7 +357,7 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
     ###################################################
     # Decide which orbital velocity to use:            #setval
     # v_orb = v_orb_calc      # use calculated velocity
-    v_orb = 13300.  # use user value
+    v_orb = CONFIG_INI.getfloat('beta_Pic', 'planet_vcirc')  # use user value
     ###################################################
 
     # calculate transit times of beta Pic b's and the supermoons' Hill spheres
@@ -522,8 +513,8 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
     # rad_radii = Table([radii_ar], names=('rad_radii'))  # not working at the moment
 
     # save the two tables to files
-    ascii.write(light, targetdir + 'lightcurve_bring.dat')
-    ascii.write(time_points, targetdir + 'time_params_bring.dat')
+    ascii.write(light, os.path.join(targetdir, 'lightcurve_bring.dat'))
+    ascii.write(time_points, os.path.join(targetdir, 'time_params_bring.dat'))
 
     ### ---
 
@@ -537,7 +528,7 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
         3] = 90  # phi_deg [degrees]: angle between the normal of the secondary companion's orbit and the normal of the ring plane
 
     # write radii, taus, disk parameters and star size into .fits file, to be used further
-    exorings.write_ring_fits(targetdir + "face-on_disk.fits", res, taun_rings, radii, d_star)
+    exorings.write_ring_fits(os.path.join(targetdir, "face-on_disk.fits"), res, taun_rings, radii, d_star)
     print('')
     print("Writing ring radii, ring taus, disk parameters and star size into 'face-on_disk.fits'.")
     print('')
@@ -573,7 +564,7 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
     rings_tmin = tcenter - (trange / 2.)
     rings_tmax = tcenter + (trange / 2.)
 
-    (time, flux, flux_err) = j1407.j1407_photom_binned(targetdir + 'lightcurve_bring.dat', rings_tmin, rings_tmax)
+    (time, flux, flux_err) = j1407.j1407_photom_binned(os.path.join(targetdir, 'lightcurve_bring.dat'), rings_tmin, rings_tmax)
 
     # plot the data
     # plt.scatter(time, flux)
@@ -628,8 +619,8 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
     print('Output file is ', fitsout)
 
     # I won't be reading in a .fits file, but take the data from first part of program   #pyadjust
-    fitsin_disk = targetdir + "face-on_disk.fits"  # this is for the array res, which we are changing further below anyway
-    fitsin_ring = targetdir + "face-on_disk.fits"
+    fitsin_disk = os.path.join(targetdir, "face-on_disk.fits")  # this is for the array res, which we are changing further below anyway
+    fitsin_ring = os.path.join(targetdir, "face-on_disk.fits")
     # fitsout = tilted_disk.fits        # name of the new .fits file with parameters for tilted ring system
     vstar = v_orb
 
@@ -815,7 +806,7 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
     # export
     conv_light = Table([g[0], g[1], g_err], names=(
     'time', 'flux', 'flux_rms'))  # flux_rms still there cause I'll need it at the readout in bring_lightcurves.py
-    ascii.write(conv_light, targetdir + output + '.dat')
+    ascii.write(conv_light, os.path.join(targetdir, output + '.dat'))
 
     ###########################################
 
@@ -840,11 +831,11 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
 
     # save scattered light to file, separate form convolved light curve
     scat_light = Table([sc_time, sc_light, g_err], names=('sc_deg', 'sc_light', 'pseudo_error'))
-    ascii.write(scat_light, targetdir + output + '_scat.dat')
+    ascii.write(scat_light, os.path.join(targetdir, output + '_scat.dat'))
 
     # save summed up light of both scattered and occulted light curve
     tot_light = Table([sc_time, g[1] + sc_light, g_err], names=('tot_deg', 'tot_light', 'pseudo_error'))
-    ascii.write(tot_light, targetdir + output + '_tot.dat')
+    ascii.write(tot_light, os.path.join(targetdir, output + '_tot.dat'))
 
     print('')
     print('-Checkpoint: Exporting the fitted/convolved curve works.')
@@ -871,11 +862,11 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
     plt.show() # - shows both the face-on light curve as well as the convolved plotting window
     '''  # COMMENT
 
-    exorings.write_ring_fits(targetdir + output + '.fits', res, taun_rings, rad_rings, dstar)
+    exorings.write_ring_fits(os.path.join(targetdir, output + '.fits'), res, taun_rings, rad_rings, dstar)
 
     # Creating a parameter text file in targetdir to know whats happening
     if paramfile == True:
-        params = open(targetdir + "system_parameters.txt", "w")
+        params = open(os.path.join(targetdir, "system_parameters.txt"), "w")
         params.write("Amount of moons: %d moons \n" % int(index_array.shape[0]))
         params.write("Moon masses in kg: %s times factor %s \n" % (str(masses_array), scale_fac_m))
         params.write("Moon distances in m: %s times factor %s \n" % (str(axes_array), scale_fac_a))

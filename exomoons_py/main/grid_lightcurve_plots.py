@@ -18,7 +18,7 @@ from matplotlib.gridspec import GridSpec
 
 import exomoons_py.modules.bring as bring
 import exomoons_py.main.draw_rings as draw_rings
-from hicat.config import CONFIG_INI
+from exomoons_py.config import CONFIG_INI
 
 # constants (taken from disk_sim.py)
 G = 6.6738480e-11  # m3 kg-1 s-2
@@ -36,10 +36,8 @@ pc = 3.0856e16  # m
 print('##################  STARTING  #################################\n')
 
 ######################################################################################
-local_path = CONFIG_INI.getstring('data_paths', 'local_data_path')
-current_exp = CONFIG_INI.getstring('data_paths', 'curr_data_path')
-current_exp = CONFIG_INI.getstring('data_paths', 'curr_data_path')
-
+local_path = CONFIG_INI.get('data_paths', 'local_data_path')
+current_exp = CONFIG_INI.get('data_paths', 'curr_data_path')
 
 data = os.path.join(local_path, current_exp)  # which data folder should be used for the plots
 ######################################################################################
@@ -51,7 +49,7 @@ y_range = 42  # half of height of ring system plots; # 42 for b=17%; 20 for scal
 fig_title = "setting_up"
 
 #################
-### define grid
+### Define grid
 #################
 fig_grid = plt.figure()  # create the figure
 
@@ -112,8 +110,8 @@ for i, axis in enumerate(ax_light_list):
     print("Making light curve #", i + 1)
     print('')
     # Importing the light curve data
-    time, flux, flux_errxx = bring.lightcurve_import(data + '/model' + str(i) + '.dat', 'time', 'flux', 'flux_rms')
-    time_sc, flux_sc, flux_errxx_sc = bring.lightcurve_import(data + '/model' + str(i) + '_scat' + '.dat', 'sc_deg',
+    time, flux, flux_errxx = bring.lightcurve_import(os.path.join(data, 'model' + str(i) + '.dat'), 'time', 'flux', 'flux_rms')
+    time_sc, flux_sc, flux_errxx_sc = bring.lightcurve_import(os.path.join(data, 'model' + str(i) + '_scat' + '.dat'), 'sc_deg',
                                                               'sc_light', 'pseudo_error')
 
     # interpolation for 5min-sampling
@@ -128,7 +126,7 @@ for i, axis in enumerate(ax_light_list):
     bin_time_1h, bin_means_1h = bring.binned_1h(new_time, flux_noise)
     bin_time_1h_sc, bin_means_1h_sc = bring.binned_1h(new_time_sc, flux_noise_sc)
 
-    # introduce stellar pulsations to light curve (Koen at al. 2003a)
+    # Introduce stellar pulsations to light curve (Koen at al. 2003a)
     '''
     freq1 = 47.055 # [c/d] - cycles per day
     freq2 = 38.081 # [c/d]
@@ -144,9 +142,9 @@ for i, axis in enumerate(ax_light_list):
     bin_means_1h,sine_tot = bring.stellar_puls(bin_time_1h,bin_means_1h,amp_array,freq_array)
     '''
 
-    # introduce forward scattering
+    # Introduce forward scattering
     '''
-    timexx, scat_flux, scat_flux_errxx = bring.lightcurve_import(data + '/model' + str(i) + '_scat.dat','sc_deg','sc_light','pseudo_error')
+    timexx, scat_flux, scat_flux_errxx = bring.lightcurve_import(os.path.join(data, 'model' + str(i) + '_scat.dat'), 'sc_deg', 'sc_light', 'pseudo_error')
     
     diff = scat_flux.size - bin_means_1h.size       # Original light curves don't have same dimensions,
     side = (diff-1)/2                               # so here I make sure I cut them to the same size
@@ -156,7 +154,7 @@ for i, axis in enumerate(ax_light_list):
     print bin_means_1h[5000:5100]
     '''
 
-    # plot the light curve
+    # Plot the light curve
     bring.plot_1h_sampling(axis, bin_time_1h, bin_means_1h, new_time, new_flux,
                            days_side)  # this fills the light curve grids
 
@@ -175,7 +173,7 @@ print('MAKING RING PLOTS:\n')
 for n, plot in enumerate(ax_rings_list):
     print("Making ring system #", n + 1)
     print('')
-    in_fits = data + '/model' + str(n) + '.fits'
+    in_fits = os.path.join(data, 'model' + str(n) + '.fits')
     draw_rings.plotting_rings(plot, in_fits, days_side, -y_range, y_range, data)  # this fills in the ring system grids
 
 # label the tips and tilts
@@ -193,6 +191,6 @@ print('-------------------------------')
 print('PLOT SAVING TO FOLDER: ', data)
 print('-------------------------------')
 
-fig_grid.savefig(data + "setting_up.pdf", bbox_inches='tight')
+fig_grid.savefig(os.path.join(data, "setting_up.pdf"), bbox_inches='tight')
 
 plt.show()

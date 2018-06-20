@@ -10,6 +10,7 @@ This code uses 'bring_disk_sim_data.py' and the here created output data is used
 """
 import os
 import exomoons_py.main.bring_disk_sim_data as disksim
+from exomoons_py.config import CONFIG_INI
 
 
 # constants (taken from disk_sim.py)
@@ -26,13 +27,16 @@ au = 1.49597870700e11  # m
 pc = 3.0856e16  # m
 
 # --------------------------------------------#
+local_path = CONFIG_INI.get('data_paths', 'local_data_path')
+current_exp = CONFIG_INI.get('data_paths', 'curr_data_path')
 
-targetdir = os.path.join('/Users/ilaginja/Documents/exomoon_data', 'setting_up/')
-impact = 0.1722  # impact parameter in terms of parts of the Hill radius => b = impact * R_Hill
+targetdir = os.path.join(local_path, current_exp)
 
-# Vorlage: bring_disk_data(i_in,phi_in,output,targetdir)
+impact = CONFIG_INI.getfloat('beta_Pic', 'impact')  # impact parameter in terms of parts of the Hill radius => b = impact * R_Hill
 
-# create data
+# Template: bring_disk_data(i_in, phi_in, output, targetdir, modelnumber)
+
+# Create data
 
 print("\nMAKING MODEL 0 NOW:")
 disksim.bring_disk_data(impact, 30., 0., "model0", targetdir, '0', paramfile=True)
@@ -62,7 +66,7 @@ print("\nMAKING MODEL 8 NOW:")
 disksim.bring_disk_data(impact, 60., 60., "model8", targetdir, '8')
 
 # append stuff to parameter file
-params = open(targetdir + "system_parameters.txt", "a")
+params = open(os.path.join(targetdir, "system_parameters.txt"), "a")
 params.write("Folder name: %s \n" % targetdir)
 params.write("Impact parameter: %s of R_Hill\n" % impact)
 params.close()
