@@ -18,6 +18,7 @@ from matplotlib.gridspec import GridSpec
 
 import exomoons_py.modules.bring as bring
 import exomoons_py.main.draw_rings as draw_rings
+from hicat.config import CONFIG_INI
 
 # constants (taken from disk_sim.py)
 G = 6.6738480e-11  # m3 kg-1 s-2
@@ -35,14 +36,19 @@ pc = 3.0856e16  # m
 print('##################  STARTING  #################################\n')
 
 ######################################################################################
-data = "test"  # which data folder should be used for the plots
+local_path = CONFIG_INI.getstring('data_paths', 'local_data_path')
+current_exp = CONFIG_INI.getstring('data_paths', 'curr_data_path')
+current_exp = CONFIG_INI.getstring('data_paths', 'curr_data_path')
+
+
+data = os.path.join(local_path, current_exp)  # which data folder should be used for the plots
 ######################################################################################
 print('Working in folder: ', data, '\n')
 
 days_side = 100  # how many days left and right from eclipse midpoint I want to go; # 100 for b=17%; 30 for scaled, 50 for M_Earth, 100 for b=30%
 y_range = 42  # half of height of ring system plots; # 42 for b=17%; 20 for scaled, 35 for M_Earth at 20% R_Hill, 60 for b=30%
 # fig_title = "both m and a from 3 *inner* moons / b = 17.2% Hill sphere radius, m = galilean *5, a = supergalilean *40, v = 13.3 km/s, Hill sphere half filled"
-fig_title = "testing"
+fig_title = "setting_up"
 
 #################
 ### define grid
