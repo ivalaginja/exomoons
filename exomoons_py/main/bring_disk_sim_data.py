@@ -57,8 +57,8 @@ from astropy.io import ascii, fits
 import exomoons_py.modules.exorings as exorings
 import exomoons_py.modules.j1407 as j1407
 import exomoons_py.modules.bring as bring
+from hicat.config import CONFIG_INI
 
-from scipy.optimize import fmin
 # from scipy.ndimage import convolve
 from scipy.interpolate import interp1d
 from matplotlib.patches import PathPatch
@@ -106,7 +106,7 @@ class switch(object):
 
 
 def ringfunc(taun, *args):
-    'cost function for ring fit to photometric data'
+    """Cost function for ring fit to photometric data."""
     (t, f, f_err, rad_ri, re, k, dst) = args
     # convolve and make smoothed ring photometry
     strip, dummy, g = exorings.ellipse_strip3(rad_ri, \
@@ -127,7 +127,7 @@ def ringfunc(taun, *args):
 
 
 def calc_ring_stats(taun, t, f, f_err, rad_ri, re, k, dst, tmin, tmax):
-    'full statistics function for ring fit to photometric data'
+    """Full statistics function for ring fit to photometric data."""
     # convolve and make smoothed ring photometry
     strip, dummy, g = exorings.ellipse_strip(rad_ri, \
                                         exorings.y_to_tau(taun), re[0], re[1], re[2], re[3], k, dst)
@@ -138,8 +138,7 @@ def calc_ring_stats(taun, t, f, f_err, rad_ri, re, k, dst, tmin, tmax):
     f_sel = f[mask]
     f_err_sel = f_err[mask]
 
-    print
-    '%d points in time range %.2f to %.2f' % (t_sel.size, tmin, tmax)
+    print('%d points in time range %.2f to %.2f' % (t_sel.size, tmin, tmax))
 
     # interpolate the smoothed curve....
     ring_model = interp1d(g[0], g[1], kind='linear')
@@ -154,16 +153,11 @@ def calc_ring_stats(taun, t, f, f_err, rad_ri, re, k, dst, tmin, tmax):
     # degrees of freedom = number of photometry points - number of ring edges - 1
     dof = diff.size - taun.size - 1
     red_chisq = chisq / dof
-    print
-    'number of photometric = %d ' % diff.size
-    print
-    'number of ring edges  = %d ' % taun.size
-    print
-    'number of DOF         = %d ' % dof
-    print
-    'chi squared           = %.2f' % chisq
-    print
-    ' reduced chi squared  = %.2f' % red_chisq
+    print('number of photometric = %d ' % diff.size)
+    print('number of ring edges  = %d ' % taun.size)
+    print('number of DOF         = %d ' % dof)
+    print('chi squared           = %.2f' % chisq)
+    print(' reduced chi squared  = %.2f' % red_chisq)
 
     # http://en.wikipedia.org/wiki/Bayesian_information_criterion
     # n - number of points in data
@@ -173,8 +167,7 @@ def calc_ring_stats(taun, t, f, f_err, rad_ri, re, k, dst, tmin, tmax):
     # dependent on the data points
 
     BIC = chisq + (taun.size) * np.log(diff.size)
-    print
-    ' BIC                  = %.2f' % BIC
+    print(' BIC                  = %.2f' % BIC)
     return red_chisq
 
 
@@ -210,14 +203,14 @@ def costfunc(x, *args):
 
 
 def ind_ring(ring, r):
-    'returns index for closest ring r'
+    """Returns index for closest ring r."""
     rdiff = ring - r
     # find index of smallest positive rdiff
     return np.argmin(np.abs(rdiff))
 
 
 def ind_ring_big(ring, r):
-    'returns index for closest bigger ring r'
+    """Returns index for closest bigger ring r."""
     rdiff = ring - r
     rdiff[(rdiff < 0)] += 99999.
     # find index of smallest positive rdiff
@@ -424,7 +417,7 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
         transit_days / 4.)  # adding an outermost radius in order to cut off the dust filled part far outside the moon gaps. This determines to what extent the Hill sphere is filled. If the argument is (transit_days/2.), then the full Hill sphere is filled. If it is (transit_days/4.), then only half of the Hill sphere (until 1/2 R_H) is filled.
 
     ######################################################
-    ###### manual adjustment of ring radii #setvalradii
+    ###### manual adjustment of ring radii #setval radii
 
     # radii = [4., 5.4, 6.9, 7.4, 8., 8.7, 12.1, 13., 13.9, 14.8, 63.]   # Steven dyn sim 1 values # The last value is technically infinity, because that is outside of the (filled) Hill sphere.
 
@@ -591,7 +584,7 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
     print('number of points for statistics of KIC is %d' % (good_rings_npoints))
     # COMMENT
     # get gradients
-    (grad_time, grad_mag, grad_mag_norm) = j1407.j1407_gradients('j1407_gradients.txt')
+    (grad_time, grad_mag, grad_mag_norm) = j1407.j1407_gradients('../../input_data/j1407_gradients.txt')
 
     # ignoring until here
     # ---
@@ -610,7 +603,7 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
         print('bring_disk_sim.py -o <outputfile>')
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hd:r:o:t:s:", \
+        opts, args = getopt.getopt(sys.argv[1:], "hd:r:o:t:s:",
                                    ["dfile=", "rfile=", "ofile=", "tx=", "vstar="])
     except getopt.GetoptError:
         print_help()
@@ -768,7 +761,7 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
 
     # flux_color and flux_col
     # hold the color of the points for ingress and egress
-    flux_color = np.chararray((time.shape))
+    flux_color = np.chararray(time.shape, unicode=True)
     flux_color[:] = 'b'
     flux_color[(time > hjd_minr)] = 'r'
 
@@ -778,7 +771,7 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
         flux_col = str.join('', (flux_col, b))
 
     def plot_folded_phot(f):
-        'plot folded J1407 light curve'
+        """Plot folded J1407 light curve."""
 
         # j1407 photometry
         h1.scatter(time0, flux, c=flux_col, s=20, edgecolors='none', zorder=-20)

@@ -60,7 +60,7 @@ def plotting_rings(rplot, in_fits, days_side, y_min_ring, y_max_ring, targetdir)
     print('number of photometric points: %d' % time.size)
 
     # get gradients
-    (grad_time, grad_mag, grad_mag_norm) = j1407.j1407_gradients('j1407_gradients.txt')
+    (grad_time, grad_mag, grad_mag_norm) = j1407.j1407_gradients('../../input_data/j1407_gradients.txt')
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hr:o:s:", ["rfile=", "ofile=", "f="])

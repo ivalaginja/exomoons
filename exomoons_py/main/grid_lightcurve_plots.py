@@ -187,6 +187,6 @@ print('-------------------------------')
 print('PLOT SAVING TO FOLDER: ', data)
 print('-------------------------------')
 
-plt.show()
+fig_grid.savefig(data + "setting_up.pdf", bbox_inches='tight')
 
-fig_grid.savefig(data + "/" + data + ".pdf", bbox_inches='tight')
+plt.show()
