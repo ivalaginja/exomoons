@@ -9,7 +9,7 @@ USED BY grid_lightcurve_plots.py
 
 # some specific changes should be reversed at time again - #ChMade
 
-import sys, getopt
+import sys, getopt, os
 import numpy as np
 import matplotlib as mpl
 import matplotlib.patches as patches
@@ -26,7 +26,7 @@ import exomoons_py.modules.j1407 as j1407
 def plotting_rings(rplot, in_fits, days_side, y_min_ring, y_max_ring, targetdir):
     # --------------------------------------------------------------------
     # read in eclipse time line from the file created by "bring_disk_sim.py"
-    time_line = Table.read(targetdir + '/time_params_bring.dat', format='ascii')
+    time_line = Table.read(os.path.join(targetdir, 'time_params_bring.dat'), format='ascii')
 
     eclipse_start = time_line['start'][0]  # [5 minute intervals]
     eclipse_end = time_line['end'][0]  # [5 minute intervals from time array]
@@ -54,7 +54,7 @@ def plotting_rings(rplot, in_fits, days_side, y_min_ring, y_max_ring, targetdir)
     rings_tmax = eclipse_center + (trange / 2.)
 
     # read in photometry
-    (time, flux, flux_err) = j1407.j1407_photom_binned(targetdir + '/lightcurve_bring.dat', rings_tmin,
+    (time, flux, flux_err) = j1407.j1407_photom_binned(os.path.join(targetdir, 'lightcurve_bring.dat'), rings_tmin,
                                                        rings_tmax)  # the last two values are the limits in time units as used in the data file between which I want the photometry to be displayed. They are the begining and end time of the eclipse plus a bit of contingency, which here is the part of the data for the rest of the Hill sphere
 
     print('number of photometric points: %d' % time.size)
