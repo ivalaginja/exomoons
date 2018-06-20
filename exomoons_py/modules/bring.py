@@ -3,6 +3,7 @@ minor thesis at Leiden University, including everything I need
 to do the BRING simulations
 '''
 
+import sys, getopt, os
 import numpy as np
 from astropy.io import fits
 from astropy.table import Table, Column
@@ -12,23 +13,11 @@ from matplotlib.path import Path
 from matplotlib.patches import PathPatch
 import matplotlib.pyplot as plt
 from scipy.ndimage import convolve
-
-import sys, getopt, os
-
-sys.path.append('/Users/kenworthy/Dropbox/python_workbooks/lib')
-
-# import pyfits
-import exorings
-import j1407
-
-from scipy.optimize import fmin
-from scipy.interpolate import UnivariateSpline
 from scipy.interpolate import interp1d
 from matplotlib.patches import PathPatch
 from scipy import stats
 
-from mpl_toolkits.axes_grid1 import ImageGrid
-from matplotlib.gridspec import GridSpec
+import exomoons_py.modules.exorings as exorings
 
 # constants taken from disk_sim.py
 G = 6.673840e-11  # [m^3 kg^-1 s^-2] -> gravitational constant

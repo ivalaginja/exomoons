@@ -1,6 +1,12 @@
 # exomoons
-Creation and fitting exorings from exomoons
 
-Adapted form Matthew Kenworthy's GitHub repository "exorings", my code allows to create models of different moons and rings and then generate light curves from that.
+These are Python tools for creating and displaying exorings and exomoon artefacts (rings) in circumplanetary meterial,
+with the main goal to generate ligh curves.
+This code is based on and adapted from Matthew Kenworthy's GitHub repository "exorings", which in turn is based on
+the paper by Kenworthy and Mamajek (2015).
 
-Currently trying to put it into proper form so that others can understand what is happening.
+Full licence can be found in "LICENCE.txt".
+
+
+Currently I am bringing the code up to speed with Python 3 and trying to restructure it so that it is easier to use
+and understand.

@@ -527,8 +527,8 @@ def make_star_limbd(dstar_pix, u=0.0):
     """Make a star disk with limb darkening."""
     ke = np.mgrid[:dstar_pix, :dstar_pix]
     dp2 = (dstar_pix - 1) / 2
-    ke[0] -= dp2
-    ke[1] -= dp2
+    ke[0] -= int(dp2)
+    ke[1] -= int(dp2)
     re = np.sqrt(ke[0] * ke[0] + ke[1] * ke[1])
     ren = re / dp2
     mask = np.zeros_like(ren)
