@@ -21,8 +21,7 @@ if __name__ == '__main__':
     # Define directory to work in and create it
     targetdir = os.path.join(local_path, current_exp)
     if os.path.isdir(targetdir):
-        print('Target directory ' + targetdir + 'already exists, please delete or change folder to save data to in config.ini.')
-        sys.exit()
+        sys.exit('ERROR: The directory ' + targetdir + ' already exists, please delete or change folder to save data to in config.ini.')
     else:
         os.mkdir(targetdir)
 

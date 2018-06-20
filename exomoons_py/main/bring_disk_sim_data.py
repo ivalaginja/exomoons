@@ -20,9 +20,7 @@ Hashtags:
 TO CHANGE NUMBER OF MOONS or MOON PROPERTIES or RING PROPERTIES: #moon-no
 (also check these when something is not like you want it to be, chances are that you messed up somewhere in these)
 
-- adjust super_names
-- adjust index_array
-- create mass and semi-major variables for moons #moon-no
+- adjust main parameters in config.ini or config_local.ini
 - adjust mass array (choose scaling vs. non-scaling) #mass-scaling
 - adjust semi-major axes array (choose scaling vs. non-scaling) #axes-scaling
 - adjust ring radius values at #setvalradii
@@ -255,58 +253,42 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
         masses_array[i] = CONFIG_INI.getfloat(moon_system, 'mass' + str(i+1))
         axes_array[i] = CONFIG_INI.get(moon_system, 'axis' + str(i+1))
 
-    # Convert masses to Jupiter masses and axes to Jupiter radii.
-    m_sat_mjup = masses_array / mjup  # [mjup]!!!    # converting to Jupiter masses
-    a_sat_rjup = axes_array / rjup  # [rjup]!!!      # converting to Jupiter radii [rjup]
-
-
-
-
-
-    # scaling masses and sem.-maj. axes of satellites up with respect to beta Pic b's mass and size, respectively
-    scale_masses = False
-    scale_axes = True
-
-    if scale_masses == True:
-        m_sat_Picb = m_Picb * m_sat_mjup  # [kg] array filled with masses of the supermoons
-    if scale_axes == True:
-        a_sat_Picb = r_Picb * a_sat_rjup  # [m]  array filled with the sem.-maj. axes of the supermoons
-    # --- #mass-scaling #axes-scaling
-
-    # including extra scaling factors
+    # Blowing the system up by either scaling it up to beta Pic's measures or random scaling factors or both.
     scale_fac_a = CONFIG_INI.getfloat('moon_parameters', 'scale_fac_axes')
     scale_fac_m = CONFIG_INI.getfloat('moon_parameters', 'scale_fac_masses')
+    scale_m_random = CONFIG_INI.get('moon_parameters', 'scale_masses_random')
+    scale_a_random = CONFIG_INI.get('moon_parameters', 'scale_axes_random')
+    scale_m_betaPic = CONFIG_INI.get('moon_parameters', 'scale_masses_betaPic')
+    scale_a_betaPic = CONFIG_INI.get('moon_parameters', 'scale_axes_betaPic')
 
-    a_sat_Picb = a_sat_Picb * scale_fac_a  # including scaling factor to blow system up
-    # m_sat_Picb = m_sat_Picb * 1.5
-    # --- #mass-scaling #axes-scaling
+    moon_masses = masses_array
+    moon_axes = axes_array
 
-    # leave out the scaling: #pyadjust
-    m_sat_Picb = masses_array * scale_fac_m  # [kg]       # including scaling factor to blow system up
-    # a_sat_Picb = axes_array        # [m]
-    # --- #mass-scaling #axes-scaling
+    if scale_m_betaPic:
+        moon_masses = moon_masses * m_Picb           # [kg] array filled with masses of the supermoons
+    if scale_a_betaPic:
+        moon_axes = moon_axes * r_Picb               # [m]  array filled with the sem.-maj. axes of the supermoons
+    if scale_m_random:
+        moon_masses = moon_masses * scale_fac_m      # [kg]
+    if scale_a_random:
+        moon_axes = moon_axes * scale_fac_a          # [m]
 
-    # this line is because I was using a different combiation of moon masses and distances: #pyadjust
-    # m_sat_Picb = np.array([m_europe,m_ganymede,m_callisto])
-    # a_sat_Picb = (np.array([a_io,a_europe,a_ganymede])/rjup) * r_Picb * 40   # distances of three closest moons; scaled up; with factor 30
+    # Convert masses to Jupiter masses and axes to Jupiter radii.
+    m_sat_mjup = moon_masses / mjup  # [mjup]!!!    # converting to Jupiter masses
+    a_sat_rjup = moon_axes / rjup  # [rjup]!!!      # converting to Jupiter radii [rjup]
 
-
-
-
-
-
-    # calculate Hill radii of b Pic b and its supermoons
+    # Calculate Hill radii of b Pic b and its supermoons.
     hill_betaPicb = bring.hill(a_Picb, m_Picb, M_beta_Pic)  # [m] Hill radius of beta Pic b (single number)
-    hill_sat_Picb = bring.hill(a_sat_Picb, m_sat_Picb, m_Picb)  # [m] Hill radii of the supermoons (array)
+    hill_sat_Picb = bring.hill(moon_axes, moon_masses, m_Picb)  # [m] Hill radii of the supermoons (array)
 
     print('')
     print('------------------------------------------------')
     print('Mass and distance parameters of the moons')
     print('beta Pic b Hill sphere [m]:', hill_betaPicb)
-    print('Moon masses in terms of m_Picb: ', m_sat_Picb / m_Picb)
-    print('Moon masses in terms of mearth:', m_sat_Picb / mearth)
-    print('Moon distances in terms of r_Picb:', a_sat_Picb / r_Picb)
-    print('Moon distances in terms of planet Hill sphere:', a_sat_Picb / hill_betaPicb)
+    print('Moon masses in terms of m_Picb: ', moon_masses / m_Picb)
+    print('Moon masses in terms of mearth:', moon_masses / mearth)
+    print('Moon distances in terms of r_Picb:', moon_axes / r_Picb)
+    print('Moon distances in terms of planet Hill sphere:', moon_axes / hill_betaPicb)
     print('')
     print('mearth/m_Picb:', mearth / m_Picb)
     print('mearth/mearth:', mearth / mearth)
@@ -315,13 +297,13 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
     # creating a .txt file of these parameters, for further use
     out0 = moon_names  # names of supermoons
     out1 = index_array  # ID's of supermoons
-    out2 = m_sat_Picb  # masses of supermoons [kg]
-    out2c = m_sat_Picb / mjup  # masses of supermoons [mjup]
-    out2a = m_sat_Picb / m_Picb  # masses of supermoons [m_Picb]
-    out2b = m_sat_Picb / mearth  # masses of supermoons [mearth]
-    out3 = a_sat_Picb  # semi-major axes of supermoons [m]
-    out3a = a_sat_Picb / hill_betaPicb  # semi-major axes of supermoons [R_H planet]
-    out3b = a_sat_Picb / r_Picb  # semi-major axes of supermoons [r_Picb]
+    out2 = moon_masses  # masses of supermoons [kg]
+    out2c = moon_masses / mjup  # masses of supermoons [mjup]
+    out2a = moon_masses / m_Picb  # masses of supermoons [m_Picb]
+    out2b = moon_masses / mearth  # masses of supermoons [mearth]
+    out3 = moon_axes  # semi-major axes of supermoons [m]
+    out3a = moon_axes / hill_betaPicb  # semi-major axes of supermoons [R_H planet]
+    out3b = moon_axes / r_Picb  # semi-major axes of supermoons [r_Picb]
     out4 = hill_sat_Picb  # Hill radii of supermoons [m]
     out4a = hill_sat_Picb / r_Picb  # Hill radii of supermoons [r_Picb]
 
@@ -342,8 +324,8 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
     print('masses of Galilean moons in terms of mjup:', m_sat_mjup)
     print('axes of Galilean moons in terms of rjup:', a_sat_rjup)
     print('')
-    print('masses of supermoons:', m_sat_Picb)
-    print('axes of supermoons:', a_sat_Picb)
+    print('masses of supermoons:', moon_masses)
+    print('axes of supermoons:', moon_axes)
     print('')
     print('Hill radius of beta Pic b in SI unit meter:', hill_betaPicb)
     print('Hill radius of beta Pic b in terms of its radius:', hill_betaPicb / r_Picb)
@@ -390,8 +372,8 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
 
     # creating correct values for inner and outer edges
     for i in range(len(index_array)):
-        inner_edges[i] = (a_sat_Picb[i] - hill_sat_Picb[i]) / v_orb  # [s]
-        outer_edges[i] = (a_sat_Picb[i] + hill_sat_Picb[i]) / v_orb  # [s]
+        inner_edges[i] = (moon_axes[i] - hill_sat_Picb[i]) / v_orb  # [s]
+        outer_edges[i] = (moon_axes[i] + hill_sat_Picb[i]) / v_orb  # [s]
 
     # transforming radii to units of days
     inner_edges = inner_edges / 86400.  # [days]
