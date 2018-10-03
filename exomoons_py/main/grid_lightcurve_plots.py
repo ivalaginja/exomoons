@@ -184,3 +184,4 @@ if __name__ == '__main__':
     fig_grid.savefig(os.path.join(data, "setting_up.pdf"), bbox_inches='tight')
 
     plt.show()
+    
