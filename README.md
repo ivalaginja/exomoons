@@ -7,10 +7,10 @@ the paper by Kenworthy and Mamajek (2015).
 
 Full licence can be found in "LICENCE.txt".
 
-Currently I am bringing the code up to speed with Python 3 and trying to restructure it so that it is easier to use
-and understand.
+Currently I am not actively working on this code but offering support to people who (want to) use it.
 
 ##############################################################################
+
 The code is written in Python 3 but should be Python 2 compatible. We would encourage anyone to use Python 3.x though, since Python 2 is just not a thing anymore. Really. Just write Python 3 code.
 ##############################################################################
 
