@@ -8,7 +8,9 @@ Creating the data for an image grid of ring systems and light curves, with diffe
 Created data are a fits, dat and txt file. They will be saved to a subfolder specifed by "targetdir" and can be further used with the ring drawing code.
 This code uses 'bring_disk_sim_data.py' and the here created output data is used by 'grid_lightcurve_plots.py'.
 """
-import sys, os
+import sys
+import os
+from shutil import copy
 import exomoons_py.main.bring_disk_sim_data as disksim
 from exomoons_py.config import CONFIG_INI
 
@@ -26,6 +28,9 @@ if __name__ == '__main__':
         os.mkdir(targetdir)
 
     impact = CONFIG_INI.getfloat('beta_Pic', 'impact')  # impact parameter in terms of parts of the Hill radius => b = impact * R_Hill
+
+    # Copy the configfile to the experiment folder.
+    copy(os.path.join('..', 'config_local.ini'), targetdir)
 
     # Template: bring_disk_data(i_in, phi_in, output, targetdir, modelnumber)
 
