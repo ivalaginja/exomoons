@@ -399,18 +399,18 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
     # radii = [24.0045147, 24.15229606666667, 24.300077433333332, 24.4478588, 38.0257874, 38.3679632, 38.710139, 39.0523148, 60.7415504, 61.23297753333333, 61.724404666666665, 62.2158318, 78.0403366]   # values for manually blown up b=17% system with 3 galilean moons, with manually 1/3-gap dust lanes in the cleared gaps
 
     ########## ORIGINAL ##############
-    # radii = [23.84712982, 24.09983444, 24.35253906, 24.60524368, 37.6613884, 38.246496836666665, 38.83160527333334, 39.41671371, 60.21819305, 61.058521266666666, 61.898849483333336, 62.7391777, 78.04033661] # values for manually blown up b=17% system with 3 galilean*5 moons, with manually 1/3-gap dust lanes in the cleared gaps
+    radii = [23.84712982, 24.09983444, 24.35253906, 24.60524368, 37.6613884, 38.246496836666665, 38.83160527333334, 39.41671371, 60.21819305, 61.058521266666666, 61.898849483333336, 62.7391777, 78.04033661] # values for manually blown up b=17% system with 3 galilean*5 moons, with manually 1/3-gap dust lanes in the cleared gaps
     ########## ORIGINAL END ##########
 
     # radii for solution (i) to fit Lecavelier light curve - straight thirds
-    radii = [60.21819305, 61.058521266666666, 61.898849483333336, 62.7391777]
+    #radii = [60.21819305, 61.058521266666666, 61.898849483333336, 62.7391777]
 
     # radii for adapting the sizes to trying to fit curve by adjusting scattering rings strip sizes
     # outer strips are narrorwer by half and middle strip bigger by third (I think)
     # radii = [60.6383571583, 61.058521266666666, 62.3190135917, 62.7391777]
 
     # another try
-    radii = [61.06, 61.058521266666666, 61.898849483333336, 61.9]
+    #radii = [61.06, 61.058521266666666, 61.898849483333336, 61.9]
 
     # radii = [23.66184044, 24.038071316666667, 24.41430219333333, 24.79053307, 37.23237228, 38.103491463333334, 38.97461064666667, 39.84572983, 59.60205841, 60.853146869999996, 62.10423533, 63.35532379, 78.04033661]   # values for manually blown up b=17% system with 3 supergalilean*1.5 moons, with manually 1/3-gap dust lanes in the cleared gaps
 
