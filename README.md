@@ -10,7 +10,10 @@ Full licence can be found in "LICENCE.txt".
 Currently I am bringing the code up to speed with Python 3 and trying to restructure it so that it is easier to use
 and understand.
 
-#######################################
+##############################################################################
+The code is written in Python 3 but should be Python 2 compatible. We would encourage anyone to use Python 3.x though, since Python 2 is just not a thing anymore. Really. Just write Python 3 code.
+##############################################################################
+
 Current instructions to make stuff run:
 
 
