@@ -8,11 +8,8 @@ Set variable 'data' to the folder you want to use the light curves and ring syst
 Uses 'draw_rings.py'.
 """
 
-import sys
-import getopt
 import os
 import time
-import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 
@@ -39,7 +36,7 @@ if __name__ == '__main__':
     days_side = 100  # how many days left and right from eclipse midpoint I want to go; # 100 for b=17%; 30 for scaled, 50 for M_Earth, 100 for b=30%
     y_range = 42  # half of height of ring system plots; # 42 for b=17%; 20 for scaled, 35 for M_Earth at 20% R_Hill, 60 for b=30%
     # fig_title = "both m and a from 3 *inner* moons / b = 17.2% Hill sphere radius, m = galilean *5, a = supergalilean *40, v = 13.3 km/s, Hill sphere half filled"
-    fig_title = "setting_up"
+    fig_title = current_exp
 
     #################
     ### Define grid
@@ -103,21 +100,21 @@ if __name__ == '__main__':
         print("Making light curve #", i + 1)
         print('')
         # Importing the light curve data
-        time, flux, flux_errxx = bring.lightcurve_import(os.path.join(data, 'model' + str(i) + '.dat'), 'time', 'flux', 'flux_rms')
-        time_sc, flux_sc, flux_errxx_sc = bring.lightcurve_import(os.path.join(data, 'model' + str(i) + '_scat' + '.dat'), 'sc_deg',
-                                                                  'sc_light', 'pseudo_error')
+        time_in, flux, flux_errxx = bring.lightcurve_import(os.path.join(data, 'model' + str(i) + '.dat'), 'time', 'flux', 'flux_rms')
+        #time_sc, flux_sc, flux_errxx_sc = bring.lightcurve_import(os.path.join(data, 'model' + str(i) + '_scat' + '.dat'), 'sc_deg',
+        #                                                          'sc_light', 'pseudo_error')
 
         # interpolation for 5min-sampling
-        new_time, new_flux = bring.interpol_5min(time, flux)
-        new_time_sc, new_flux_sc = bring.interpol_5min(time_sc, flux_sc)
+        new_time, new_flux = bring.interpol_5min(time_in, flux)
+        #new_time_sc, new_flux_sc = bring.interpol_5min(time_sc, flux_sc)
 
         # introduce gaussian scatter
         flux_noise = bring.gaussian_scatter(new_flux)
-        flux_noise_sc = bring.gaussian_scatter(new_flux_sc)
+        #flux_noise_sc = bring.gaussian_scatter(new_flux_sc)
 
         # bin to 1h
         bin_time_1h, bin_means_1h = bring.binned_1h(new_time, flux_noise)
-        bin_time_1h_sc, bin_means_1h_sc = bring.binned_1h(new_time_sc, flux_noise_sc)
+        #bin_time_1h_sc, bin_means_1h_sc = bring.binned_1h(new_time_sc, flux_noise_sc)
 
         # Introduce stellar pulsations to light curve (Koen at al. 2003a)
         '''
@@ -152,10 +149,10 @@ if __name__ == '__main__':
                                days_side)  # this fills the light curve grids
 
         # add scattered curve
-        ax_add = axis.twinx()
-        ax_add.plot(new_time, new_flux + new_flux_sc)
-        ax_add.set_ylim(60., 100.)
-        ax_add.set_xlim(-days_side, days_side)
+        #ax_add = axis.twinx()
+        #ax_add.plot(new_time, new_flux + new_flux_sc)
+        #ax_add.set_ylim(60., 100.)
+        #ax_add.set_xlim(-days_side, days_side)
 
     print('---------------------------')
     print('MAKING RING PLOTS:\n')
@@ -182,7 +179,6 @@ if __name__ == '__main__':
 
     print('-------------------------------')
     print('PLOT SAVING TO FOLDER: ', data)
-    print('-------------------------------')
 
     plt.show()
     fig_grid.savefig(os.path.join(data, current_exp + ".pdf"), bbox_inches='tight')
