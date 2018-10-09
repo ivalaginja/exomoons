@@ -1,6 +1,5 @@
 ###########################
 #    Iva Laginja, 2016    #
-# last change, 03-04-2017 #
 ###########################
 
 # updated value for semi-major axis of beta Pic b!
@@ -20,9 +19,7 @@ Hashtags:
 TO CHANGE NUMBER OF MOONS or MOON PROPERTIES or RING PROPERTIES: #moon-no
 (also check these when something is not like you want it to be, chances are that you messed up somewhere in these)
 
-- adjust main parameters in config.ini or config_local.ini
-- adjust mass array (choose scaling vs. non-scaling) #mass-scaling
-- adjust semi-major axes array (choose scaling vs. non-scaling) #axes-scaling
+- adjust main parameters in config_local.ini
 - adjust ring radius values at #setvalradii
 - adjust tau values
 
@@ -389,7 +386,7 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
         transit_days / 4.)  # adding an outermost radius in order to cut off the dust filled part far outside the moon gaps. This determines to what extent the Hill sphere is filled. If the argument is (transit_days/2.), then the full Hill sphere is filled. If it is (transit_days/4.), then only half of the Hill sphere (until 1/2 R_H) is filled.
 
     ######################################################
-    ###### manual adjustment of ring radii #setval radii
+    ###### manual adjustment of ring radii #setvalradii
 
     # radii = [4., 5.4, 6.9, 7.4, 8., 8.7, 12.1, 13., 13.9, 14.8, 63.]   # Steven dyn sim 1 values # The last value is technically infinity, because that is outside of the (filled) Hill sphere.
 
@@ -668,7 +665,7 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
     # printing list of radii and taus
     exorings.print_ring_tau(rad_rings, exorings.y_to_tau(taun_rings))
 
-    print('\n CURRENTlY MAKING MODEL', modelnumber)
+    print('\n CURRENTLY MAKING MODEL', modelnumber)
 
     # set up stellar disk
     kern = exorings.make_star_limbd(21, 0.8)

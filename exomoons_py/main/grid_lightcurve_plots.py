@@ -1,6 +1,5 @@
 ###########################
 #    Iva Laginja, 2016    #
-# last change, 16-02-2017 #
 ###########################
 """
 Making gridded light curves and ring system images from the data in the folder 'data', created by 'data_creation.py'.
