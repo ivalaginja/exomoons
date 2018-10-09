@@ -257,21 +257,21 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
     scale_m_betaPic = CONFIG_INI.get('moon_parameters', 'scale_masses_betaPic')
     scale_a_betaPic = CONFIG_INI.get('moon_parameters', 'scale_axes_betaPic')
 
-    moon_masses = masses_array
-    moon_axes = axes_array
+    # Convert masses to Jupiter masses and axes to Jupiter radii.
+    m_sat_mjup = masses_array / mjup  # [mjup]!!!    # converting to Jupiter masses
+    a_sat_rjup = axes_array / rjup  # [rjup]!!!      # converting to Jupiter radii [rjup]
 
     if scale_m_betaPic:
-        moon_masses = moon_masses * m_Picb           # [kg] array filled with masses of the supermoons
+        m_sat_mjup = m_sat_mjup * m_Picb           # [kg] array filled with masses of the supermoons
     if scale_a_betaPic:
-        moon_axes = moon_axes * r_Picb               # [m]  array filled with the sem.-maj. axes of the supermoons
+        a_sat_rjup = a_sat_rjup * r_Picb               # [m]  array filled with the sem.-maj. axes of the supermoons
     if scale_m_random:
-        moon_masses = moon_masses * scale_fac_m      # [kg]
+        m_sat_mjup = m_sat_mjup * scale_fac_m      # [kg]
     if scale_a_random:
-        moon_axes = moon_axes * scale_fac_a          # [m]
+        a_sat_rjup = a_sat_rjup * scale_fac_a          # [m]
 
-    # Convert masses to Jupiter masses and axes to Jupiter radii.
-    m_sat_mjup = moon_masses / mjup  # [mjup]!!!    # converting to Jupiter masses
-    a_sat_rjup = moon_axes / rjup  # [rjup]!!!      # converting to Jupiter radii [rjup]
+    moon_masses = m_sat_mjup
+    moon_axes = a_sat_rjup
 
     # Calculate Hill radii of b Pic b and its supermoons.
     hill_betaPicb = bring.hill(a_Picb, m_Picb, M_beta_Pic)  # [m] Hill radius of beta Pic b (single number)
@@ -429,7 +429,7 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
     print('')
 
     # taus for solution (i) to fit Lecavelier light curve
-    taun_rings = [100., 5.2, 3.0, 5.2, 100.]
+    #taun_rings = [100., 5.2, 3.0, 5.2, 100.]
 
     # ---
     # creating light curve plot for face-on situation
