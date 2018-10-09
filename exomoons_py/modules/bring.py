@@ -560,12 +560,12 @@ def plot_1h_sampling(ax, bin_time_1h, bin_means_1h, new_time, new_flux, days_sid
     ax.scatter(bin_time_1h, bin_means_1h, s=1)
     # plt.errorbar(bin_time_1h, bin_means_1h, yerr=bin_err_1h, fmt='k.')   # errorbars still very, very dense
     ax.plot(new_time, new_flux, c='r', linewidth=1.0)  # overplot the ideal curve
-    # ax.axis((-days_side, days_side, 0.92, 1.02))              # original limits
-    ax.axis((-days_side, days_side, 1.6, 1.8))
+    #ax.axis((-days_side, days_side, 0.92, 1.02))              # original limits
+    # ax.axis((-days_side, days_side, 1.6, 1.8))
     # ax.axis((-days_side, days_side, 0.5, 10.))
     # ax.axis((-days_side, days_side, 60., 100.))
-    # ax.set_xlabel('Time [Days]')
-    # ax.set_ylabel('Transmission')
+    ax.set_xlabel('Time [Days]')
+    ax.set_ylabel('Transmission')
     # ax.set_title('set a title')    # describes the physical parameters used in bring_disk_sim.py to create the rings system which light curve we are presenting here
     # ax.tick_params(width=3, length=15)
     # ax.yticks(fontsize=40)

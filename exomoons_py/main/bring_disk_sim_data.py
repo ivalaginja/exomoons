@@ -1,6 +1,5 @@
 ###########################
 #    Iva Laginja, 2016    #
-# last change, 03-04-2017 #
 ###########################
 
 # updated value for semi-major axis of beta Pic b!
@@ -20,9 +19,7 @@ Hashtags:
 TO CHANGE NUMBER OF MOONS or MOON PROPERTIES or RING PROPERTIES: #moon-no
 (also check these when something is not like you want it to be, chances are that you messed up somewhere in these)
 
-- adjust main parameters in config.ini or config_local.ini
-- adjust mass array (choose scaling vs. non-scaling) #mass-scaling
-- adjust semi-major axes array (choose scaling vs. non-scaling) #axes-scaling
+- adjust main parameters in config_local.ini
 - adjust ring radius values at #setvalradii
 - adjust tau values
 
@@ -50,10 +47,9 @@ import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from astropy.table import Table, Column
-from astropy.io import ascii, fits
+from astropy.io import ascii
 # from scipy.ndimage import convolve
 from scipy.interpolate import interp1d
-from matplotlib.patches import PathPatch
 
 import exomoons_py.modules.exorings as exorings
 import exomoons_py.modules.j1407 as j1407
@@ -261,21 +257,21 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
     scale_m_betaPic = CONFIG_INI.get('moon_parameters', 'scale_masses_betaPic')
     scale_a_betaPic = CONFIG_INI.get('moon_parameters', 'scale_axes_betaPic')
 
-    moon_masses = masses_array
-    moon_axes = axes_array
+    # Convert masses to Jupiter masses and axes to Jupiter radii.
+    m_sat_mjup = masses_array / mjup  # [mjup]!!!    # converting to Jupiter masses
+    a_sat_rjup = axes_array / rjup  # [rjup]!!!      # converting to Jupiter radii [rjup]
 
     if scale_m_betaPic:
-        moon_masses = moon_masses * m_Picb           # [kg] array filled with masses of the supermoons
+        m_sat_mjup = m_sat_mjup * m_Picb           # [kg] array filled with masses of the supermoons
     if scale_a_betaPic:
-        moon_axes = moon_axes * r_Picb               # [m]  array filled with the sem.-maj. axes of the supermoons
+        a_sat_rjup = a_sat_rjup * r_Picb               # [m]  array filled with the sem.-maj. axes of the supermoons
     if scale_m_random:
-        moon_masses = moon_masses * scale_fac_m      # [kg]
+        m_sat_mjup = m_sat_mjup * scale_fac_m      # [kg]
     if scale_a_random:
-        moon_axes = moon_axes * scale_fac_a          # [m]
+        a_sat_rjup = a_sat_rjup * scale_fac_a          # [m]
 
-    # Convert masses to Jupiter masses and axes to Jupiter radii.
-    m_sat_mjup = moon_masses / mjup  # [mjup]!!!    # converting to Jupiter masses
-    a_sat_rjup = moon_axes / rjup  # [rjup]!!!      # converting to Jupiter radii [rjup]
+    moon_masses = m_sat_mjup
+    moon_axes = a_sat_rjup
 
     # Calculate Hill radii of b Pic b and its supermoons.
     hill_betaPicb = bring.hill(a_Picb, m_Picb, M_beta_Pic)  # [m] Hill radius of beta Pic b (single number)
@@ -390,7 +386,7 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
         transit_days / 4.)  # adding an outermost radius in order to cut off the dust filled part far outside the moon gaps. This determines to what extent the Hill sphere is filled. If the argument is (transit_days/2.), then the full Hill sphere is filled. If it is (transit_days/4.), then only half of the Hill sphere (until 1/2 R_H) is filled.
 
     ######################################################
-    ###### manual adjustment of ring radii #setval radii
+    ###### manual adjustment of ring radii #setvalradii
 
     # radii = [4., 5.4, 6.9, 7.4, 8., 8.7, 12.1, 13., 13.9, 14.8, 63.]   # Steven dyn sim 1 values # The last value is technically infinity, because that is outside of the (filled) Hill sphere.
 
@@ -399,18 +395,18 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
     # radii = [24.0045147, 24.15229606666667, 24.300077433333332, 24.4478588, 38.0257874, 38.3679632, 38.710139, 39.0523148, 60.7415504, 61.23297753333333, 61.724404666666665, 62.2158318, 78.0403366]   # values for manually blown up b=17% system with 3 galilean moons, with manually 1/3-gap dust lanes in the cleared gaps
 
     ########## ORIGINAL ##############
-    # radii = [23.84712982, 24.09983444, 24.35253906, 24.60524368, 37.6613884, 38.246496836666665, 38.83160527333334, 39.41671371, 60.21819305, 61.058521266666666, 61.898849483333336, 62.7391777, 78.04033661] # values for manually blown up b=17% system with 3 galilean*5 moons, with manually 1/3-gap dust lanes in the cleared gaps
+    radii = [23.84712982, 24.09983444, 24.35253906, 24.60524368, 37.6613884, 38.246496836666665, 38.83160527333334, 39.41671371, 60.21819305, 61.058521266666666, 61.898849483333336, 62.7391777, 78.04033661] # values for manually blown up b=17% system with 3 galilean*5 moons, with manually 1/3-gap dust lanes in the cleared gaps
     ########## ORIGINAL END ##########
 
     # radii for solution (i) to fit Lecavelier light curve - straight thirds
-    radii = [60.21819305, 61.058521266666666, 61.898849483333336, 62.7391777]
+    #radii = [60.21819305, 61.058521266666666, 61.898849483333336, 62.7391777]
 
     # radii for adapting the sizes to trying to fit curve by adjusting scattering rings strip sizes
     # outer strips are narrorwer by half and middle strip bigger by third (I think)
     # radii = [60.6383571583, 61.058521266666666, 62.3190135917, 62.7391777]
 
     # another try
-    radii = [61.06, 61.058521266666666, 61.898849483333336, 61.9]
+    #radii = [61.06, 61.058521266666666, 61.898849483333336, 61.9]
 
     # radii = [23.66184044, 24.038071316666667, 24.41430219333333, 24.79053307, 37.23237228, 38.103491463333334, 38.97461064666667, 39.84572983, 59.60205841, 60.853146869999996, 62.10423533, 63.35532379, 78.04033661]   # values for manually blown up b=17% system with 3 supergalilean*1.5 moons, with manually 1/3-gap dust lanes in the cleared gaps
 
@@ -433,7 +429,7 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
     print('')
 
     # taus for solution (i) to fit Lecavelier light curve
-    taun_rings = [100., 5.2, 3.0, 5.2, 100.]
+    #taun_rings = [100., 5.2, 3.0, 5.2, 100.]
 
     # ---
     # creating light curve plot for face-on situation
@@ -669,7 +665,7 @@ def bring_disk_data(impact, i_in, phi_in, output, targetdir, modelnumber, paramf
     # printing list of radii and taus
     exorings.print_ring_tau(rad_rings, exorings.y_to_tau(taun_rings))
 
-    print('\n CURRENTlY MAKING MODEL', modelnumber)
+    print('\n CURRENTLY MAKING MODEL', modelnumber)
 
     # set up stellar disk
     kern = exorings.make_star_limbd(21, 0.8)
