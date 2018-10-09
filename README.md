@@ -8,6 +8,7 @@ the paper by Kenworthy and Mamajek (2015).
 Full licence can be found in "LICENCE.txt".
 
 Currently I am not actively working on this code but offering support to people who (want to) use it.
+There is still a lot of instances in the code where things are hard coded and need to be moved to the configfile (as of 10/08/2018).
 
 ##############################################################################
 
