@@ -34,6 +34,9 @@ if __name__ == '__main__':
     ######################################################################################
     print('Working in folder: ', data, '\n')
 
+    # Keeping track of code runtime
+    start_time = time.time()
+
     days_side = 100  # how many days left and right from eclipse midpoint I want to go; # 100 for b=17%; 30 for scaled, 50 for M_Earth, 100 for b=30%
     y_range = 42  # half of height of ring system plots; # 42 for b=17%; 20 for scaled, 35 for M_Earth at 20% R_Hill, 60 for b=30%
     # fig_title = "both m and a from 3 *inner* moons / b = 17.2% Hill sphere radius, m = galilean *5, a = supergalilean *40, v = 13.3 km/s, Hill sphere half filled"
@@ -182,7 +185,9 @@ if __name__ == '__main__':
     print('PLOT SAVING TO FOLDER: ', data)
     print('-------------------------------')
 
-    fig_grid.savefig(os.path.join(data, "setting_up.pdf"), bbox_inches='tight')
-
     plt.show()
-    
+    fig_grid.savefig(os.path.join(data, current_exp + ".pdf"), bbox_inches='tight')
+
+    #### Ending program
+    end_time = time.time()
+    print('Runtime:', str((end_time - start_time) / 60) + " min")

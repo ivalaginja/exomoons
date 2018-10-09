@@ -30,17 +30,24 @@ if __name__ == '__main__':
     else:
         os.mkdir(targetdir)
 
+    # Keeping track of code runtime
+    start_time = time.time()
+
     impact = CONFIG_INI.getfloat('beta_Pic', 'impact')  # impact parameter in terms of parts of the Hill radius => b = impact * R_Hill
 
     # Copy the configfile to the experiment folder.
-    copy(os.path.join('..', 'config_local.ini'), targetdir)
+    #copy(os.path.join('..', 'config_local.ini'), targetdir)
+    copy(os.path.join('..', 'config.ini'), targetdir)
 
     # Template: bring_disk_data(i_in, phi_in, output, targetdir, modelnumber)
 
     # Create data
 
+    start_time_single = time.time()   # Keeping track of code runtime for single model
     print("\nMAKING MODEL 0 NOW:")
     disksim.bring_disk_data(impact, 30., 0., "model0", targetdir, '0', paramfile=True)
+    end_time_single = time.time()
+
 
     print("\nMAKING MODEL 1 NOW:")
     disksim.bring_disk_data(impact, 30., 30., "model1", targetdir, '1')
@@ -77,3 +84,9 @@ if __name__ == '__main__':
     print('impact = ', impact)
     print('DATA SAVED TO ', targetdir)
     print('---------------------------')
+
+    #### Ending program
+    end_time = time.time()
+
+    print('Runtime:', str((end_time-start_time)/60) + " min")
+    print('(Runtime of one model:', str((end_time_single-start_time_single)/60) + ' min)')
