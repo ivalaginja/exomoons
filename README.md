@@ -7,10 +7,14 @@ the paper by Kenworthy and Mamajek (2015).
 
 Full licence can be found in "LICENCE.txt".
 
-Currently I am bringing the code up to speed with Python 3 and trying to restructure it so that it is easier to use
-and understand.
+Currently I am not actively working on this code but offering support to people who (want to) use it.
+There is still a lot of instances in the code where things are hard coded and need to be moved to the configfile (as of 10/08/2018).
 
-#######################################
+##############################################################################
+
+The code is written in Python 3 but should be Python 2 compatible. We would encourage anyone to use Python 3.x though, since Python 2 is just not a thing anymore. Really. Just write Python 3 code.
+##############################################################################
+
 Current instructions to make stuff run:
 
 
@@ -25,7 +29,9 @@ in config.ini. Make sure you tell your version control system to ignore config_l
 
 --- CREATING DATA (you can skip steps 1-4 if data already exists) ---
 
-1) Open config.ini or config_local.ini and set your system pathd and system parameters.
+1) Open config.ini or config_local.ini and set your system path and system parameters.
+    - "local_data_path" sets your overall directory you want to have data from these simulations saved to
+    - "curr_data_path" sets the current specific subdirectory you want an experiment saved to (need to change this for each new run/experiment)
 
 2) Run data_creation.py
 
