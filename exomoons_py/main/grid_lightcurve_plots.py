@@ -9,11 +9,12 @@ Set variable 'data' to the folder you want to use the light curves and ring syst
 Uses 'draw_rings.py'.
 """
 
-import sys, getopt, os
+import sys
+import getopt
+import os
+import time
 import numpy as np
-import matplotlib as mpl
 import matplotlib.pyplot as plt
-from astropy.table import Table, Column
 from matplotlib.gridspec import GridSpec
 
 import exomoons_py.modules.bring as bring

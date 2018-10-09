@@ -50,10 +50,9 @@ import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from astropy.table import Table, Column
-from astropy.io import ascii, fits
+from astropy.io import ascii
 # from scipy.ndimage import convolve
 from scipy.interpolate import interp1d
-from matplotlib.patches import PathPatch
 
 import exomoons_py.modules.exorings as exorings
 import exomoons_py.modules.j1407 as j1407

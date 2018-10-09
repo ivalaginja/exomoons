@@ -9,15 +9,16 @@ USED BY grid_lightcurve_plots.py
 
 # some specific changes should be reversed at time again - #ChMade
 
-import sys, getopt, os
+import sys
+import getopt
+import os
 import numpy as np
 import matplotlib as mpl
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 from matplotlib.ticker import MultipleLocator
-from astropy.table import Table, Column
-from astropy.io import ascii
+from astropy.table import Table
 
 import exomoons_py.modules.exorings as exorings
 import exomoons_py.modules.j1407 as j1407

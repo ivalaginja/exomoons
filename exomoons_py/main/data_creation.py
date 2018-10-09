@@ -1,16 +1,19 @@
 ###########################
 #    Iva Laginja, 2016    #
-# last change, 16-02-2017 #
 ###########################
 
 """
 Creating the data for an image grid of ring systems and light curves, with different i and phi.
 Created data are a fits, dat and txt file. They will be saved to a subfolder specifed by "targetdir" and can be further used with the ring drawing code.
 This code uses 'bring_disk_sim_data.py' and the here created output data is used by 'grid_lightcurve_plots.py'.
+
+Takes currently about 3 minutes to run.
 """
+
 import sys
 import os
 from shutil import copy
+import time
 import exomoons_py.main.bring_disk_sim_data as disksim
 from exomoons_py.config import CONFIG_INI
 
