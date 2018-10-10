@@ -3,7 +3,8 @@
 These are Python tools for creating and displaying exorings and exomoon artefacts (rings) in circumplanetary meterial,
 with the main goal to generate ligh curves.
 This code is based on and adapted from Matthew Kenworthy's GitHub repository "exorings", which in turn is based on
-the paper by Kenworthy and Mamajek (2015).
+the paper by Kenworthy and Mamajek (2015):
+https://github.com/mkenworthy/exorings
 
 Full licence can be found in "LICENCE.txt".
 
