@@ -11,9 +11,8 @@ Full licence can be found in "LICENCE.txt".
 Currently I am not actively working on this code but offering support to people who (want to) use it.
 There is still a lot of instances in the code where things are hard coded and need to be moved to the configfile (as of 10/08/2018).
 
-##############################################################################
 The code is written in Python 3 but is Python 2 compatible. I would encourage anyone to use Python 3.x though, since Python 2 is just not a thing anymore. Really. Just write Python 3 code.
-##############################################################################
+
 
 Current instructions to make stuff run:
 
@@ -42,7 +41,7 @@ copy config.ini and rename the copy to config_local.ini. This new file will over
 in config.ini. Make sure you tell your version control system to ignore config_local.ini.
 
 
---- CREATING DATA (you can skip steps 1-4 if data already exists) ---
+--- CREATING DATA (you can skip steps 1-3 if data already exists) ---
 
 1) Open config_local.ini and set your system path and system parameters.
     - "local_data_path" sets your overal directory you want to have data from these simulations saved to
