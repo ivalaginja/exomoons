@@ -12,7 +12,6 @@ Currently I am not actively working on this code but offering support to people 
 There is still a lot of instances in the code where things are hard coded and need to be moved to the configfile (as of 10/08/2018).
 
 ##############################################################################
-
 The code is written in Python 3 but is Python 2 compatible. I would encourage anyone to use Python 3.x though, since Python 2 is just not a thing anymore. Really. Just write Python 3 code.
 ##############################################################################
 
@@ -24,7 +23,7 @@ Current instructions to make stuff run:
 
 - cd into the directory you want to have your repo in
 - $ git clone git@github.com:ivalaginja/exomoons.git
-- $ cd <repo>/exomoons_py
+- $ cd -repo-/exomoons_py
 - open config.ini with a text editor and change the entry for "local_data_path" to the directory you want to save the data to and "cur_data_path" to the name you want the experiment folder to have
 - $ python data_creation.py
 - $ python grid_lightcurve_plots.py
