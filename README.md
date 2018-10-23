@@ -14,23 +14,18 @@ There is still a lot of instances in the code where things are hard coded and ne
 The code is written in Python 3 but is Python 2 compatible. I would encourage anyone to use Python 3.x though, since Python 2 is just not a thing anymore. Really. Just write Python 3 code.
 
 
-Current instructions to make stuff run:
-
--------------
-# Quick run for direct example results from template:
--------------
+## Quick run for direct example results from template:
 
 - cd into the directory you want to have your repo in
-- $ git clone git@github.com:ivalaginja/exomoons.git
-- $ cd -repo-/exomoons_py
+- `git clone git@github.com:ivalaginja/exomoons.git`
+- `cd -repo-/exomoons_py`
 - open config.ini with a text editor and change the entry for "local_data_path" to the directory you want to save the data to and "cur_data_path" to the name you want the experiment folder to have
-- $ python data_creation.py
-- $ python grid_lightcurve_plots.py
+- `python data_creation.py`
+- `python grid_lightcurve_plots.py`
 - look at the result in the directory you defined for local_data_path/cur_data_path !
 
--------------
-# Going beyond just running the default code:
--------------
+
+## Going beyond just running the default code:
 
 --- FIRST: SET UP THE CONFIGURATION FILE
 
@@ -65,3 +60,14 @@ in config.ini. Make sure you tell your version control system to ignore config_l
 
 
 y-axis size of the ring plots can be set in draw_rings.py, #new_y_rings; but technically I set them in grid_lightcurve_plots.py (parameter "y_range")
+
+
+## Contributing
+
+If you want to suggest changes to this content do the following:
+
+1. Fork it
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Added some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create new Pull Request
