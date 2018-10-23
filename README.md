@@ -14,9 +14,6 @@ There is still a lot of instances in the code where things are hard coded and ne
 The code is written in Python 3 but is Python 2 compatible. I would encourage anyone to use Python 3.x though, since Python 2 is just not a thing anymore. Really. Just write Python 3 code.
 
 
-Current instructions to make stuff run:
-
-
 ## Quick run for direct example results from template:
 
 - cd into the directory you want to have your repo in
