@@ -20,11 +20,11 @@ Current instructions to make stuff run:
 ## Quick run for direct example results from template:
 
 - cd into the directory you want to have your repo in
-- $ git clone git@github.com:ivalaginja/exomoons.git
-- $ cd -repo-/exomoons_py
+- `git clone git@github.com:ivalaginja/exomoons.git`
+- `cd -repo-/exomoons_py`
 - open config.ini with a text editor and change the entry for "local_data_path" to the directory you want to save the data to and "cur_data_path" to the name you want the experiment folder to have
-- $ python data_creation.py
-- $ python grid_lightcurve_plots.py
+- `python data_creation.py`
+- `python grid_lightcurve_plots.py`
 - look at the result in the directory you defined for local_data_path/cur_data_path !
 
 
