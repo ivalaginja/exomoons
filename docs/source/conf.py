@@ -41,7 +41,9 @@ exclude_patterns = []
 
 # set main doc file
 master_doc = 'index'
-
+source_suffix = {
+    '.rst': 'restructuredtext',
+}
 
 # -- Options for HTML output -------------------------------------------------
 
